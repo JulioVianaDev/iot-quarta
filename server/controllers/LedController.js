@@ -3,6 +3,7 @@ let ledState = false;
 
 const toggleLED =()=>{
     ledState = !ledState
+    console.log(`Led state: ${ledState}`);
 }
 
 const job = new cron.CronJob('*/1 * * * * *',toggleLED)
