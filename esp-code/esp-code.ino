@@ -8,6 +8,21 @@
 bool stateLedApi;
 
 void setup() {
+  //Conectando no wifi
+  Serial.begin(115200);
+  delay(10);
+  Serial.println();
+  Serial.print("Conectando no Wifi: ");
+  Serial.println(ssid);
+  Wifi.begin(ssid,password);
+  while(Wifi.status() !== WL_CONNECTED){
+    delay(1000);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  
   // put your setup code here, to run once:
   pinMode(led,OUTPUT);
 }
