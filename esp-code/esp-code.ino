@@ -1,8 +1,12 @@
 #include ".\config.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <ArduinoJson.h>
 
 #define led D8
+
+bool stateLedApi;
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(led,OUTPUT);
