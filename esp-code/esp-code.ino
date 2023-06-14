@@ -1,3 +1,7 @@
+#include ".\config.h"
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+
 #define led D8
 void setup() {
   // put your setup code here, to run once:
