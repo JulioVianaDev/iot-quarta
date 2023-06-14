@@ -14,8 +14,8 @@ void setup() {
   Serial.println();
   Serial.print("Conectando no Wifi: ");
   Serial.println(ssid);
-  Wifi.begin(ssid,password);
-  while(Wifi.status() != WL_CONNECTED){
+  WiFi.begin(ssid,password);
+  while(WiFi.status() != WL_CONNECTED){
     delay(1000);
     Serial.print(".");
   }
@@ -25,12 +25,40 @@ void setup() {
   
   // put your setup code here, to run once:
   pinMode(led,OUTPUT);
+
+  //Criar um Client para o site
+  WiFiClientSecure client;
+  HTTPClient http;
+
+  client.setInsecure(); // desativando o ssl
+  http.begin(client,"https://iot-turma-quarta-feira.onrender.com/");
+  int httpCode = http.GET();
+  if(httpCode > 0){
+    String payload = http.getString();
+    Serial.println(payload);
+  }else{
+    Serial.print("Erro ao tentar pegar dados da Api");
+  }
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  digitalWrite(led,HIGH);
-  delay(500);
-  digitalWrite(led,LOW);
-  delay(500);
+  WiFiClientSecure client;
+  HTTPClient http;
+  client.setInsecure(); // desativando o ssl
+  http.begin(client,"https://iot-turma-quarta-feira.onrender.com/led/state-led");
+  int httpCode = http.GET();
+  String payload = http.getString();
+  Serial.print(payload);
+
+  StaticJsonDocument<54> doc;
+
+  DeserializationError error = deserializeJson(doc,payload);
+  if(error){
+    Serial.print(F("deu erro ao transformar em documento o nosso json da api"));
+    Serial.println(error.f_str());
+  }
+  bool state = doc["state"];
+  Serial.println(state);
+  digitalWrite(led,state);
+  delay(10);
 }
