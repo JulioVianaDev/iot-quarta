@@ -56,26 +56,34 @@ void setup() {
   }else{
     Serial.print("Erro ao tentar pegar dados da Api");
   }
+
+  pinMode(trigPin,OUTPUT);
+  pinMode(echoPin,INPUT);
 }
 
 void loop() {
   WiFiClientSecure client;
   HTTPClient http;
   client.setInsecure(); // desativando o ssl
-  http.begin(client,"https://iot-turma-quarta-feira.onrender.com/led/state-led");
-  int httpCode = http.GET();
-  String payload = http.getString();
-  Serial.print(payload);
-
-  StaticJsonDocument<54> doc;
-
-  DeserializationError error = deserializeJson(doc,payload);
-  if(error){
-    Serial.print(F("deu erro ao transformar em documento o nosso json da api"));
-    Serial.println(error.f_str());
+  //se o tempo atual(millis) menos a ultima marcação(lastTime) for menor que tempo escolhido
+  //eu faço a tarefa e reinicio a marcação passando o tempo atual
+  if((millis()-lastTimeLed > timerDelayLed)){
+    //faço algo
+    http.begin(client,"https://iot-turma-quarta-feira.onrender.com/led/state-led");
+    int httpCode = http.GET();
+    String payload = http.getString();
+    Serial.print(payload);
+  
+    StaticJsonDocument<54> doc;
+  
+    DeserializationError error = deserializeJson(doc,payload);
+    if(error){
+      Serial.print(F("deu erro ao transformar em documento o nosso json da api"));
+      Serial.println(error.f_str());
+    }
+    bool state = doc["state"];
+    Serial.println(state);
+    digitalWrite(led,state);
+    lastTimeLed=millis();
   }
-  bool state = doc["state"];
-  Serial.println(state);
-  digitalWrite(led,state);
-  delay(10);
 }
