@@ -5,7 +5,24 @@
 
 #define led D8
 
+//Variaveis led
 bool stateLedApi;
+unsigned long lastTimeLed = 0;
+unsigned long timerDelayLed = 10;
+
+//Sensor ultrassonico
+unsigned long lastTimeSensor = 0;
+unsigned long timerDelaySensor = 50;
+
+const int trigPin = D6;
+const int echoPin = D5;
+
+//definindo a velocidade do com em cm/uS
+#define SOUND_VELOCITY 0.034
+
+long duration;
+float distanceCm;
+float distanceInch;
 
 void setup() {
   //Conectando no wifi
