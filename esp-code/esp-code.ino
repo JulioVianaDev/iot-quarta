@@ -86,4 +86,29 @@ void loop() {
     digitalWrite(led,state);
     lastTimeLed=millis();
   }
+  //Lendo o sinal
+  digitalWrite(trigPin,LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin,LOW);
+
+  duration = pulseIn(echoPin,HIGH);
+  distanceCm = duration * SOUND_VELOCITY/2;
+
+  if((millis() - lastTimeSensor > timerDelaySensor)){
+    http.begin(client,"https://iot-turma-quarta-feira.onrender.com/sensor/acesso");
+    http.addHeader("Content-Type","application/json");
+    StaticJsonDocument<100> SensorDocument;
+    SensorDocument["nome"] = "Porta De Entrada";
+    SensorDocument["value"] = distanceCm;
+    if(distanceCm < 150 and distanceCm > 50){
+      char bufferDoJsonEmString[100];
+      serializeJson(SensorDocument,bufferDoJsonEmString);
+      int httpReponseCode = http.POST(bufferDoJsonEmString);
+      String ResponseServer = http.getString();
+      Serial.println(ResponseServer);
+    }
+    lastTimeSensor = millis();
+  }
 }
